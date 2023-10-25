@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Category {
+  UKM
+  AMIKOM
+  Berita
+  Saran
+}
+
+model students {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String?
+  googleId  String?  @unique
+  posts     posts[]
+  comments  comments[]
+  profile   profiles?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model profiles {
+  id          Int      @id @default(autoincrement())
+  student_id  Int      @unique
+  student     students @relation(fields: [student_id], references: [id])
+  imageProfile String?
+  nim         String?  
+}
+
+model posts {
+  id          Int      @id @default(autoincrement())
+  body        String
+  student_id  Int
+  student     students @relation(fields: [student_id], references: [id])
+  comments    comments[]
+  category    Category @default(AMIKOM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model comments {
+  id          Int      @id @default(autoincrement())
+  body        String
+  student_id  Int       
+  student     students @relation(fields: [student_id], references: [id])
+  post_id     Int
+  post        posts    @relation(fields: [post_id], references: [id])
+}
