@@ -41,7 +41,7 @@ const Comments = ({ postId }: IProps) => {
   const [body, setBody] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
   const { data: sessions, status } = useSession();
-
+  
   if (status === 'unauthenticated') {
     return (
       <div className="bg-gray px-4 h-screen pb-4 container max-w-lg">
