@@ -23,6 +23,7 @@ interface Comment {
 interface Post {
   id: number;
   body: string;
+  image?: string;
   student: {
     name: string;
     email: string;
@@ -41,7 +42,7 @@ const Comments = ({ postId }: IProps) => {
   const [body, setBody] = useState('');
   const [comments, setComments] = useState<Comment[]>([]);
   const { data: sessions, status } = useSession();
-  
+
   if (status === 'unauthenticated') {
     return (
       <div className="bg-gray px-4 h-screen pb-4 container max-w-lg">
@@ -101,15 +102,7 @@ const Comments = ({ postId }: IProps) => {
           </Link>
         </div>
         <div className="w-full flex px-4 flex-col items-center ">
-          <Post
-            name={post?.student?.name ?? ''}
-            description={post?.body ?? ''}
-            id={post?.id ?? 0}
-            profilePicture={post?.student?.profile?.imageProfile ?? ''}
-            imagePost="https://source.unsplash.com/random/350x200/?laptop"
-            isBtnComment={false}
-            className="w-full"
-          />
+          <Post name={post?.student?.name ?? ''} description={post?.body ?? ''} id={post?.id ?? 0} profilePicture={post?.student?.profile?.imageProfile ?? ''} imagePost={post?.image ?? ''} isBtnComment={false} className="w-full" />
         </div>
         <div className="flex flex-col w-full gap-2 mt-4 px-4 mb-16">
           {comments.length === 0 && (
@@ -120,7 +113,13 @@ const Comments = ({ postId }: IProps) => {
           )}
           {comments.map((comment) => (
             <div className={`flex  w-full ${comment.student.email === sessions?.user?.email ? 'justify-end' : 'justify-start'}`}>
-              <Comment id={comment.id} name={comment.student.name} profilePicture={comment.student.profile?.imageProfile ?? ''} content={comment.body} order={comment.student.email !== sessions?.user?.email ? 'left' : 'right'} />
+              <Comment
+                id={comment.id}
+                name={comment.student.name}
+                profilePicture={comment.student.profile?.imageProfile ?? '/blank-profile.png'}
+                content={comment.body}
+                order={comment.student.email !== sessions?.user?.email ? 'left' : 'right'}
+              />
             </div>
           ))}
         </div>

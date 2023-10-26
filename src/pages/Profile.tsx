@@ -23,7 +23,7 @@ const Profile = () => {
           </div>
         </div>
         <div className="flex px-2 items-center justify-evenly">
-          <Image width={150} className="rounded-full" height={150} src={session?.user?.image ?? ''} alt="Taufik" />
+          <Image width={150} className="rounded-full" height={150} src={session?.user?.image ?? '/blank-profile.png'} alt="Taufik" />
           <div className="bg-white shadow-md p-4 rounded-md flex gap-4 items-center">
             <div>
               <h2>

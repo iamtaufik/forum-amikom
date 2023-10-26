@@ -41,6 +41,7 @@ model profiles {
 model posts {
   id          Int      @id @default(autoincrement())
   body        String
+  image       String?
   student_id  Int
   student     students @relation(fields: [student_id], references: [id])
   comments    comments[]

@@ -6,6 +6,7 @@ import axios from 'axios';
 type Post = {
   id: number;
   body: string;
+  image?: string;
   category: string;
   createdAt: string;
   updatedAt: string;
@@ -48,8 +49,8 @@ const PostsList = () => {
             .join(' ')}
           description={post.body}
           id={post.id}
-          profilePicture={post.student.profile?.imageProfile ?? ''}
-          imagePost="https://source.unsplash.com/random/350x200/?laptop"
+          profilePicture={post.student.profile?.imageProfile ?? '/blank-profile.png'}
+          imagePost={post.image ?? ''}
           className="w-4/5"
         />
       ))}

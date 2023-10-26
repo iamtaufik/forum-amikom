@@ -2,7 +2,7 @@
 import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import LoginBtn from '@/components/LoginBtn';
@@ -31,6 +31,9 @@ const AddPost = () => {
   const [isActive, setIsActive] = useState<number>(0);
   const [isUploadImage, setIsUploadImage] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
+  const [myFile, setMyFile] = useState<File>();
+  const [previewURL, setPreviewURL] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   if (status === 'unauthenticated') {
@@ -41,12 +44,39 @@ const AddPost = () => {
     );
   }
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setIsUploadImage(true);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewURL(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const openFileInput = () => {
+    fileInputRef.current?.click();
+    if (myFile) {
+      setIsUploadImage(true);
+    }
+  };
+
+  const handleDeleteFile = () => {
+    setMyFile(undefined);
+    setIsUploadImage(false);
+    setPreviewURL('');
+  };
+
   const createPostHandler = async () => {
     if (content === '' || isActive === 0) return false;
     try {
       await axios.post('/api/posts', {
-        content,
-        category: tags.find((tag) => tag.id === isActive)?.name,
+        body: content,
+        imageBase64: previewURL,
+        category: tags.find((tag) => tag.id === isActive)?.name ?? '',
       });
 
       router.push('/');
@@ -77,15 +107,27 @@ const AddPost = () => {
       <div className="mt-6 bg-white py-4 px-2 rounded-xl">
         <div className=" flex gap-4 ">
           <div>
-            <Image className=" rounded-full p-1 bg-primary" width={50} height={50} alt={sessions?.user?.name ?? ''} src={sessions?.user?.image ?? ''} />
+            <Image className=" rounded-full " width={50} height={50} alt={sessions?.user?.name ?? ''} src={sessions?.user?.image ?? '/blank-profile.png'} />
           </div>
           <div className="w-3/4">
             <textarea onChange={(e) => setContent(e.target.value)} placeholder="Apa yang sedang terjadi?" className=" py-2 text-base rounded-lg focus-visible:outline-primary focus-visible:ring-1 w-full h-36 px-2"></textarea>
           </div>
         </div>
-        <div className="my-4">{isUploadImage && <Image width={350} height={200} className="w-full rounded-2xl" src={'https://source.unsplash.com/random/350x200/?laptop'} alt={'laptop'} />}</div>
         <div className="my-4">
-          <div className={`shadow-md rounded-full w-max flex justify-center items-center ${isUploadImage ? 'bg-secondary text-white' : 'bg-white text-primary'}`} onClick={() => setIsUploadImage(!isUploadImage)}>
+          {isUploadImage && previewURL && (
+            <div className="flex">
+              <Image width={150} height={200} className=" rounded-2xl" src={previewURL} alt={'laptop'} />
+              <div className="shadow-md h-max p-2 rounded-full" onClick={handleDeleteFile}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="my-4">
+          <div className={`shadow-md rounded-full w-max flex justify-center items-center ${isUploadImage ? 'bg-secondary text-white' : 'bg-white text-primary'}`} onClick={openFileInput}>
+            <input type="file" accept=".jpg,.png,.jpeg" hidden name="image" ref={fileInputRef} onChange={handleFileChange} />
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 m-2 ">
               <path
                 strokeLinecap="round"

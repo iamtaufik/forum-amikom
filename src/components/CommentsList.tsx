@@ -46,8 +46,7 @@ const CommentsList = () => {
             .filter((w) => w !== comment.student.name.split(' ')[comment.student.name.split(' ').length - 1])
             .join(' ')}
           id={comment.id}
-          profilePicture={comment.student.profile?.
-            imageProfile ?? ''}
+          profilePicture={comment.student.profile?.imageProfile ?? ''}
           content={comment.body}
         />
       ))}

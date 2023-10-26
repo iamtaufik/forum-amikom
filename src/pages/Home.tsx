@@ -13,6 +13,7 @@ const categories = ['Terbaru', 'UKM', 'AMIKOM', 'Berita', 'Saran'];
 type Post = {
   id: number;
   body: string;
+  image?: string;
   category: string;
   createdAt: string;
   updatedAt: string;
@@ -63,7 +64,7 @@ const Home = () => {
                 description={post.body}
                 id={post.id}
                 profilePicture={post.student.profile?.imageProfile ?? ''}
-                imagePost="https://source.unsplash.com/random/350x200/?laptop"
+                imagePost={post.image ?? ''}
               />
             ))}
 
@@ -77,8 +78,8 @@ const Home = () => {
                 .join(' ')}
               description={post.body}
               id={post.id}
-              profilePicture={post.student.profile?.imageProfile ?? ''}
-              imagePost="https://source.unsplash.com/random/350x200/?laptop"
+              profilePicture={post.student.profile?.imageProfile ?? '/blank-profile.png'}
+              imagePost={post.image ?? ''}
             />
           ))}
       </div>
