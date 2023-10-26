@@ -21,9 +21,8 @@ const PostsList = () => {
 
   const getMyPosts = async () => {
     try {
-      const { data } = await axios.get('/api/posts/me');
-      console.log(data);
-      setPosts(data.data);
+      const { data } = await axios.get('/api/profile/posts');
+      setPosts(data.data.posts);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -34,6 +33,12 @@ const PostsList = () => {
   }, []);
   return (
     <>
+      {posts.length === 0 && (
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-primary font-semibold">Belum ada postingan</span>
+          <span className="text-slate-400">Buat postingan pertama anda</span>
+        </div>
+      )}
       {posts.map((post) => (
         <Post
           key={post.id}

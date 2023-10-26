@@ -27,8 +27,6 @@ type Post = {
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isActive, setIsActive] = useState('Terbaru');
-  const { data: session, status } = useSession();
-  const router = useRouter();
 
   const getPosts = async () => {
     try {
@@ -41,12 +39,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (status === 'loading') <div>Loading...</div>;
-    if (status === 'unauthenticated') router.push('/login');
     getPosts();
   }, []);
   return (
-    <div className="container min-h-screen max-w-lg px-4 pb-6 bg-gray overflow-scroll">
+    <div className="container min-h-screen max-w-lg px-4 pb-6 bg-gray ">
       <Navbar />
       <div className="flex justify-between gap-x-2 overflow-x-auto py-2">
         {categories.map((category) => (

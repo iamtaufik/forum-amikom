@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import LoginBtn from '@/components/LoginBtn';
+
 const tags = [
   {
     id: 1,
@@ -25,11 +27,19 @@ const tags = [
 ];
 
 const AddPost = () => {
-  const { data: sessions } = useSession();
+  const { data: sessions, status } = useSession();
   const [isActive, setIsActive] = useState<number>(0);
   const [isUploadImage, setIsUploadImage] = useState<boolean>(false);
   const [content, setContent] = useState<string>('');
   const router = useRouter();
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="bg-gray px-4 h-screen pb-4 container max-w-lg">
+        <LoginBtn />;
+      </div>
+    );
+  }
 
   const createPostHandler = async () => {
     if (content === '' || isActive === 0) return false;

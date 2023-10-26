@@ -7,7 +7,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
   try {
     const session = await getServerSession(authOptions);
     if (!session) return NextResponse.json({ success: false, message: 'Unauthorized', data: null }, { status: 401 });
-    const student = await prisma.posts.findMany({
+    const comments = await prisma.comments.findMany({
       where: {
         student: {
           email: session?.user?.email!,
@@ -31,7 +31,7 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       },
     });
 
-    return NextResponse.json({ success: true, message: 'Get profile succesfully', data: student }, { status: 200 });
+    return NextResponse.json({ success: true, message: 'Get profile succesfully', data: { comments } }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }

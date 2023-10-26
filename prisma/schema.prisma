@@ -57,4 +57,5 @@ model comments {
   student     students @relation(fields: [student_id], references: [id])
   post_id     Int
   post        posts    @relation(fields: [post_id], references: [id])
+  createdAt   DateTime @default(now())
 }
