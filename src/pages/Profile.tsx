@@ -56,7 +56,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <div className={` pt-2 pb-16 gap-2 bg-gray flex flex-col ${isActive ? 'items-center' : 'items-end px-4'} `}>
+      <div className={` pt-2 pb-16 gap-2 bg-gray flex flex-col items-center`}>
         {isActive && <PostsList />}
         {!isActive && <CommentsList />}
       </div>

@@ -38,18 +38,11 @@ const CommentsList = () => {
           <span className="text-slate-400">Buat komentar pertama anda</span>
         </div>
       )}
-      {comments.map((comment, index) => (
-        <Comment
-          key={index}
-          name={comment.student.name
-            .split(' ')
-            .filter((w) => w !== comment.student.name.split(' ')[comment.student.name.split(' ').length - 1])
-            .join(' ')}
-          id={comment.id}
-          profilePicture={comment.student.profile?.imageProfile ?? ''}
-          content={comment.body}
-        />
-      ))}
+      <div className="flex items-end flex-col w-full">
+        {comments.map((comment, index) => (
+          <Comment key={index} name={comment.student.name} id={comment.id} profilePicture={comment.student.profile?.imageProfile ?? '/blank-profile.png'} content={comment.body} />
+        ))}
+      </div>
     </>
   );
 };

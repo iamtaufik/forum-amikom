@@ -1,12 +1,14 @@
 'use client';
+import Error from '@/components/Error';
 import Label from '@/components/Label';
+import Loading from '@/components/Loading';
 import Navbar from '@/components/Navbar';
 import NavbarBtm from '@/components/NavbarBtm';
 import Post from '@/components/Post';
+import fetcher from '@/libs/fetcher';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import useSWR, { useSWRConfig } from 'swr';
 
 const categories = ['Terbaru', 'UKM', 'AMIKOM', 'Berita', 'Saran'];
 
@@ -26,22 +28,10 @@ type Post = {
 };
 
 const Home = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
   const [isActive, setIsActive] = useState('Terbaru');
+  const { data, isLoading, error } = useSWR<Post[]>('/api/posts', fetcher);
+  const { mutate } = useSWRConfig();
 
-  const getPosts = async () => {
-    try {
-      const { data } = await axios.get('/api/posts');
-      console.log(data.data);
-      setPosts(data.data);
-    } catch (error: any) {
-      console.log(error.message);
-    }
-  };
-
-  useEffect(() => {
-    getPosts();
-  }, []);
   return (
     <div className="container min-h-screen max-w-lg px-4 pb-6 bg-gray ">
       <Navbar />
@@ -51,37 +41,27 @@ const Home = () => {
         ))}
       </div>
       <div className="mt-4 mb-12 flex flex-col gap-4">
+        {error && (
+          <Error
+            title="Gagal memuat postingan"
+            description="Silahkan coba lagi"
+            action={
+              <button onClick={() => mutate(`/api/posts`)} className="text-white px-4 p-2 rounded-xl font-semibold bg-primary">
+                Coba lagi
+              </button>
+            }
+          />
+        )}
+        {isLoading && <Loading />}
         {isActive !== 'Terbaru' &&
-          posts
+          data &&
+          data
             .filter((post) => post.category === isActive)
-            .map((post) => (
-              <Post
-                key={post.id}
-                name={post.student.name
-                  .split(' ')
-                  .filter((w) => w !== post.student.name.split(' ')[post.student.name.split(' ').length - 1])
-                  .join(' ')}
-                description={post.body}
-                id={post.id}
-                profilePicture={post.student.profile?.imageProfile ?? ''}
-                imagePost={post.image ?? ''}
-              />
-            ))}
+            .map((post) => <Post key={post.id} name={post.student.name} description={post.body} id={post.id} profilePicture={post.student.profile?.imageProfile ?? '/blank-profile.png'} imagePost={post.image ?? ''} />)}
 
         {isActive === 'Terbaru' &&
-          posts.map((post) => (
-            <Post
-              key={post.id}
-              name={post.student.name
-                .split(' ')
-                .filter((w) => w !== post.student.name.split(' ')[post.student.name.split(' ').length - 1])
-                .join(' ')}
-              description={post.body}
-              id={post.id}
-              profilePicture={post.student.profile?.imageProfile ?? '/blank-profile.png'}
-              imagePost={post.image ?? ''}
-            />
-          ))}
+          data &&
+          data.map((post) => <Post key={post.id} name={post.student.name} description={post.body} id={post.id} profilePicture={post.student.profile?.imageProfile ?? '/blank-profile.png'} imagePost={post.image ?? ''} />)}
       </div>
       <NavbarBtm />
     </div>

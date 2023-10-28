@@ -7,6 +7,9 @@ import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import LoginBtn from '@/components/LoginBtn';
 import axios from 'axios';
+import useSWR, { useSWRConfig } from 'swr';
+import fetcher from '@/libs/fetcher';
+import Error from '@/components/Error';
 
 interface Comment {
   id: number;
@@ -40,8 +43,9 @@ interface IProps {
 const Comments = ({ postId }: IProps) => {
   const [post, setPost] = useState<Post>();
   const [body, setBody] = useState('');
-  const [comments, setComments] = useState<Comment[]>([]);
   const { data: sessions, status } = useSession();
+  const { data, isLoading, error } = useSWR<Comment[]>(`/api/posts/${postId}/comments`, fetcher);
+  const { mutate } = useSWRConfig();
 
   if (status === 'unauthenticated') {
     return (
@@ -58,7 +62,7 @@ const Comments = ({ postId }: IProps) => {
         body,
       });
       setBody('');
-      getComments();
+      mutate(`/api/posts/${postId}/comments`);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -74,19 +78,8 @@ const Comments = ({ postId }: IProps) => {
     }
   };
 
-  const getComments = async () => {
-    try {
-      const { data } = await axios.get(`/api/posts/${postId}/comments`);
-      console.log(data.data);
-      setComments(data.data);
-    } catch (error: any) {
-      console.log(error);
-    }
-  };
-
   React.useEffect(() => {
     getPost();
-    getComments();
   }, []);
 
   return (
@@ -102,26 +95,51 @@ const Comments = ({ postId }: IProps) => {
           </Link>
         </div>
         <div className="w-full flex px-4 flex-col items-center ">
-          <Post name={post?.student?.name ?? ''} description={post?.body ?? ''} id={post?.id ?? 0} profilePicture={post?.student?.profile?.imageProfile ?? ''} imagePost={post?.image ?? ''} isBtnComment={false} className="w-full" />
+          <Post
+            name={post?.student?.name ?? ''}
+            description={post?.body ?? ''}
+            id={post?.id ?? 0}
+            profilePicture={post?.student?.profile?.imageProfile ?? '/blank-profile.png'}
+            imagePost={post?.image ?? ''}
+            isBtnComment={false}
+            className="w-full"
+          />
         </div>
         <div className="flex flex-col w-full gap-2 mt-4 px-4 mb-16">
-          {comments.length === 0 && (
+          {error && (
+            <Error
+              title="Gagal memuat komentar"
+              description="Silahkan coba lagi"
+              action={
+                <button onClick={() => mutate(`/api/posts/${postId}/comments`)} className="text-white px-4 p-2 rounded-xl font-semibold bg-primary">
+                  Coba lagi
+                </button>
+              }
+            />
+          )}
+          {isLoading && (
+            <div className="flex justify-center items-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          )}
+          {data && data.length === 0 && (
             <div className="flex flex-col items-center gap-2">
               <span className="text-primary font-semibold">Belum ada komentar</span>
               <span className="text-slate-400">Jadilah orang pertama yang berkomentar</span>
             </div>
           )}
-          {comments.map((comment) => (
-            <div className={`flex  w-full ${comment.student.email === sessions?.user?.email ? 'justify-end' : 'justify-start'}`}>
-              <Comment
-                id={comment.id}
-                name={comment.student.name}
-                profilePicture={comment.student.profile?.imageProfile ?? '/blank-profile.png'}
-                content={comment.body}
-                order={comment.student.email !== sessions?.user?.email ? 'left' : 'right'}
-              />
-            </div>
-          ))}
+          {data &&
+            data.map((comment) => (
+              <div className={`flex  w-full ${comment.student.email === sessions?.user?.email ? 'justify-end' : 'justify-start'}`}>
+                <Comment
+                  id={comment.id}
+                  name={comment.student.name}
+                  profilePicture={comment.student.profile?.imageProfile ?? '/blank-profile.png'}
+                  content={comment.body}
+                  order={comment.student.email !== sessions?.user?.email ? 'left' : 'right'}
+                />
+              </div>
+            ))}
         </div>
         <InputComment body={body} setBody={setBody} handleSubmit={handleSubmit} />
       </div>
