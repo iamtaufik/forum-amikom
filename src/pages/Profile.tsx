@@ -26,13 +26,8 @@ const Profile = () => {
           <Image width={150} className="rounded-full" height={150} src={session?.user?.image ?? '/blank-profile.png'} alt="Taufik" />
           <div className="bg-white shadow-md p-4 rounded-md flex gap-4 items-center">
             <div>
-              <h2>
-                {session?.user?.name
-                  ?.split(' ')
-                  .filter((w) => w !== session?.user?.name?.split(' ')[session?.user?.name?.split(' ').length - 1])
-                  .join(' ')}
-              </h2>
-              <p>{session?.user?.name?.split(' ')[session?.user?.name?.split(' ').length - 1]}</p>
+              <h2>{session?.user?.name}</h2>
+              {/* <p>{session?.user?.name?.split(' ')[session?.user?.name?.split(' ').length - 1]}</p> */}
             </div>
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-primary">

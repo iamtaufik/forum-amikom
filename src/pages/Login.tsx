@@ -59,7 +59,7 @@ const Login = () => {
         </div>
       </form>
       <p className="text-center my-4 gap-4">Atau</p>
-      <div className="flex justify-center">
+      <div className="flex justify-center text-sm">
         <button className="w-max shadow-md bg-white text-primary flex font-semibold px-4 py-2 rounded-3xl" onClick={() => signIn('google', { callbackUrl: '/' })}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 px-3" preserveAspectRatio="xMidYMid" viewBox="0 0 256 262">
             <path fill="#4285F4" d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"></path>
@@ -73,7 +73,7 @@ const Login = () => {
           Sign In with Google
         </button>
         <button className="w-max text-primary font-semibold px-4 py-2 rounded-3xl" onClick={() => router.push('/signup')}>
-          <p className="underline">Buat akun baru</p>
+          <p className="underline text-sm">Buat akun baru</p>
         </button>
       </div>
     </div>

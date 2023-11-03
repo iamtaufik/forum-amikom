@@ -13,7 +13,8 @@ const InputComment = ({ body, handleSubmit, setBody }: IProps) => {
           onChange={(e) => setBody(e.target.value)}
           type="text"
           placeholder="Tulis Komentar..."
-          className="shadow-md flex pr-10 h-12 w-full rounded-2xl pl-4  py-1 text-sm bg-white  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="shadow-md flex pr-10 h-12 rounded-2xl pl-4  py-1 text-sm bg-white  transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 
+          focus-visible:ring-ring placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         />
         <button type="submit" onClick={() => handleSubmit()}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 -ml-10 text-primary">

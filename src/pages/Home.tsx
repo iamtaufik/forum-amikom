@@ -6,13 +6,12 @@ import Navbar from '@/components/Navbar';
 import NavbarBtm from '@/components/NavbarBtm';
 import Post from '@/components/Post';
 import fetcher from '@/libs/fetcher';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 
 const categories = ['Terbaru', 'UKM', 'AMIKOM', 'Berita', 'Saran'];
 
-type Post = {
+interface Post {
   id: number;
   body: string;
   image?: string;
@@ -25,10 +24,10 @@ type Post = {
     email: string;
     profile: { imageProfile: string };
   };
-};
+}
 
 const Home = () => {
-  const [isActive, setIsActive] = useState('Terbaru');
+  const [isActive, setIsActive] = useState<string>('Terbaru');
   const { data, isLoading, error } = useSWR<Post[]>('/api/posts', fetcher);
   const { mutate } = useSWRConfig();
 
